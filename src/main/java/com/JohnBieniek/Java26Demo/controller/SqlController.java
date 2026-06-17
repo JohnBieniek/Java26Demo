@@ -4,37 +4,24 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.JohnBieniek.Java26Demo.model.Item;
-import com.JohnBieniek.Java26Demo.model.Plane;
 import com.JohnBieniek.Java26Demo.repository.ItemRepository;
 
 @RestController
 @RequestMapping(value = "/demo")
-public class DemoController {
+public class SqlController {
     private static final Logger logger = LoggerFactory.getLogger(DemoController.class);
 
+    @Autowired
     private final ItemRepository itemRepository;
 
-    public DemoController(ItemRepository itemRepository) {
+    public SqlController(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/demoInputUse")
-    public String demoInputUse(String input) {
-        String result = input == null ? "No input" : input + " complete";
-        return result;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/demoInterface")
-    public String demoInterface() {
-        Plane plane = new Plane();
-        String result = "You launch the plane.: " + plane.fly();
-        logger.info("Launching the plane,: {}", plane.fly());
-        return result;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoInMemorySqlRepository")
