@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping(value = "/animals")
-@Tag(name = "Animal Management", description = "Endpoints for demoing interfaces, abstract classes, and final declarations with animals.")
+@Tag(name = "Animal Controller", description = "Endpoints for demoing interfaces, abstract classes, and final declarations with animals.")
 public class AnimalController {
     private static final Logger logger = LoggerFactory.getLogger(AnimalController.class);
 
