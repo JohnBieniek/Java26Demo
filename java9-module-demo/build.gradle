@@ -1,0 +1,42 @@
+plugins {
+	id 'application'
+	id 'java'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+application {
+	mainClass = 'com.JohnBieniek.Java26Demo.java9.manager.Java9ModuleDemoRunner'
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(26)
+	}
+	modularity.inferModulePath = true
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework.boot:spring-boot-dependencies:4.1.0'
+	}
+}
+
+dependencies {
+	implementation 'org.springframework:spring-context'
+}
+
+tasks.register('runModuleDemo', Exec) {
+	group = 'application'
+	description = 'Run the Java 9 demo module with explicit module arguments'
+	dependsOn 'classes'
+	workingDir = projectDir
+	commandLine(
+		'java',
+		'--module-path', sourceSets.main.runtimeClasspath.asPath,
+		'--module', 'com.JohnBieniek.Java26Demo.java.nine/com.JohnBieniek.Java26Demo.java9.manager.Java9ModuleDemoRunner'
+	)
+}

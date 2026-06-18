@@ -12,6 +12,7 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(26)
 	}
+	modularity.inferModulePath = true
 }
 
 repositories {
@@ -19,6 +20,7 @@ repositories {
 }
 
 dependencies {
+	implementation project(':java9-module-demo')
 	implementation 'org.springframework.boot:spring-boot-starter-restclient'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
@@ -45,4 +47,17 @@ generateJava {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('runModule', Exec) {
+	group = 'application'
+	description = 'Run the application as a real JPMS module'
+	dependsOn 'classes'
+	workingDir = projectDir
+	commandLine(
+		'java',
+		'--module-path', sourceSets.main.runtimeClasspath.asPath,
+		'--module', 'com.JohnBieniek.Java26Demo/com.JohnBieniek.Java26Demo.Java26DemoApplication',
+		'--server.port=8090'
+	)
 }

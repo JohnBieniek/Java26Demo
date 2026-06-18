@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.manager.Java9Manager;
+import com.JohnBieniek.Java26Demo.java9.manager.Java9Manager;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,8 +22,9 @@ public class Java9Controller {
     @RequestMapping(method = RequestMethod.GET, path = "/moduleDemo")
     @Operation(
         summary = "Demonstrate the Java 9 module system",
-        description = "Uses the Module runtime API to inspect the module containing Java9Manager. "
-                + "Because this project has no module-info.java, it reports the unnamed module."
+        description = "Java9Manager is compiled in the dedicated com.JohnBieniek.Java26Demo.java.nine JPMS module. "
+                + "Its module-info.java exports the manager package and opens it to Spring. The response also "
+                + "shows whether the current application launch placed the module on the module path."
     )
     public String moduleDemo() {
         return java9Manager.moduleDemo();

@@ -1,5 +1,6 @@
-package com.JohnBieniek.Java26Demo.manager;
+package com.JohnBieniek.Java26Demo.java9.manager;
 
+import java.lang.module.ModuleDescriptor;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,16 +9,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Java9Manager {
+    private static final String DECLARED_MODULE_NAME = "com.JohnBieniek.Java26Demo.java.nine";
 
     /**
-     * Demonstrates the Java 9 module runtime API. This project does not declare
-     * module-info.java, so it runs in the unnamed module.
+     * Demonstrates the Java 9 module system. Java9Manager is compiled in a dedicated
+     * JPMS module that exports this package and opens it to Spring.
      */
     public String moduleDemo() {
-        Module module = Java9Manager.class.getModule();
-        return "module name: " + module.getName()
-                + " | named module: " + module.isNamed()
-                + " | package count: " + module.getPackages().size();
+        Module runtimeModule = Java9Manager.class.getModule();
+        ModuleDescriptor descriptor = runtimeModule.getDescriptor();
+
+        return "declared module: " + DECLARED_MODULE_NAME
+                + " | runtime module: " + runtimeModule.getName()
+                + " | running on module path: " + runtimeModule.isNamed()
+                + " | descriptor available at runtime: " + (descriptor != null);
     }
 
     /**
