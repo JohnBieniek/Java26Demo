@@ -1,7 +1,6 @@
 module com.JohnBieniek.Java26Demo {
     requires java.net.http;
     requires jdk.httpserver;
-    requires commons.logging;
 
     requires spring.boot;
     requires spring.boot.autoconfigure;

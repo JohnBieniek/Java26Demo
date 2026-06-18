@@ -66,7 +66,8 @@ public class Java11Manager {
                 .filter(line -> !line.isBlank())
                 .count();
 
-        return "is blank: " + value.isBlank()
+        return "value used:"+value
+                + " | is blank: " + value.isBlank()
                 + " | stripped: [" + value.strip() + "]"
                 + " | non-blank lines: " + nonBlankLines;
     }
