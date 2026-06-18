@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;  
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.model.Plane;
+import com.JohnBieniek.Java26Demo.model.animal.Beetle;
 
 @RestController
 @RequestMapping(value = "/demo")
@@ -46,8 +46,8 @@ public class Java8Controller {
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoDefaultInterfaceMethod")
     public String demoDefaultInterfaceMethod(){
-        Plane plane = new Plane();
-        String result = plane.describeFlight() + " " + plane.fly();
+        Beetle beetle = new Beetle();
+        String result = beetle.describeFlight() + " " + beetle.fly();
         logger.info("Default interface demo: {}", result);
         return result;
     }

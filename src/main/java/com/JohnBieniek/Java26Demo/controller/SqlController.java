@@ -1,5 +1,7 @@
 package com.JohnBieniek.Java26Demo.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.dto.AddEmployeeRequest;
+import com.JohnBieniek.Java26Demo.dto.organization.AddEmployeeRequest;
+import com.JohnBieniek.Java26Demo.dto.organization.EmployeeProjectAssignment;
+import com.JohnBieniek.Java26Demo.dto.organization.ProjectSummary;
+import com.JohnBieniek.Java26Demo.dto.organization.TeamEmployeeStatistics;
 import com.JohnBieniek.Java26Demo.manager.SqlManager;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +33,7 @@ public class SqlController {
         this.sqlManager = sqlManager;
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/addEmployee")
+    @RequestMapping(method = RequestMethod.POST, path = "/addEmployee")
     @ResponseStatus(HttpStatus.CREATED)
     public String addEmployee(@Valid @ModelAttribute AddEmployeeRequest request) {
         return sqlManager.addEmployee(request);
@@ -47,7 +52,7 @@ public class SqlController {
         return sqlManager.addProject(name, budget, teamId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/addTeam")
+    @RequestMapping(method = RequestMethod.POST, path = "/addTeam")
     @ResponseStatus(HttpStatus.CREATED)
     public String addTeam(@RequestParam @NotBlank String name, @RequestParam @NotBlank String location) {
         return sqlManager.addTeam(name, location);
@@ -99,9 +104,10 @@ public class SqlController {
     @Operation(
         summary = "Join employee, team, and project tables",
         description = "Joins employees to their team, then joins each team to its projects. "
-                + "Only active employees with a matching team and project are returned."
+                + "Only active employees with a matching team and project are returned. "
+                + "Each result is represented by an immutable Java record, a permanent feature since Java 16."
     )
-    public String getEmployeesTeamsAndProjects() {
+    public List<EmployeeProjectAssignment> getEmployeesTeamsAndProjects() {
         return sqlManager.getEmployeesTeamsAndProjects();
     }
 
@@ -127,15 +133,21 @@ public class SqlController {
     @RequestMapping(method = RequestMethod.GET, path = "/getProjects")
     @Operation(
         summary = "Get all projects",
-        description = "Returns every project with its budget and assigned team."
+        description = "Returns every project with its budget and assigned team as an immutable ProjectSummary record. "
+                + "Records became a permanent Java feature in Java 16."
     )
-    public String getProjects() {
+    public List<ProjectSummary> getProjects() {
         return sqlManager.getProjects();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getTeamEmployeeStatistics")
-    @Operation(description = "Demonstrate the use of COUNT, SUM, AVG, MIN, MAX, GROUP BY, and JOIN in SQL.")
-    public String getTeamEmployeeStatistics() {
+    @Operation(
+        summary = "Get team statistics using a Java record",
+        description = "Demonstrates COUNT, SUM, AVG, MIN, MAX, GROUP BY, and JOIN in SQL. "
+                + "Each immutable result is returned as a TeamEmployeeStatistics record, "
+                + "a permanent Java feature since Java 16."
+    )
+    public List<TeamEmployeeStatistics> getTeamEmployeeStatistics() {
         return sqlManager.getTeamEmployeeStatistics();
     }
 
@@ -149,8 +161,20 @@ public class SqlController {
         return sqlManager.getTeamsAndEmployeesRightJoin();
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/resetEmployeesTeamsAndProjects")
+    @RequestMapping(method = RequestMethod.POST, path = "/resetEmployeesTeamsAndProjects")
     public String resetEmployeesTeamsAndProjects() {
         return sqlManager.resetEmployeesTeamsAndProjects();
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/updateEmployee")
+    @Operation(
+        summary = "Replace an employee using HTTP PUT",
+        description = "PUT is used because the request supplies the employee's complete editable representation. "
+                + "POST remains reserved for creating employees, teams, and projects."
+    )
+    public String updateEmployee(
+            @RequestParam @NotNull Long employeeId,
+            @Valid @ModelAttribute AddEmployeeRequest request) {
+        return sqlManager.updateEmployee(employeeId, request);
     }
 }

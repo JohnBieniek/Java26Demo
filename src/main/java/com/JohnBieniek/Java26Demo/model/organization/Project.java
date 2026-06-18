@@ -1,4 +1,4 @@
-package com.JohnBieniek.Java26Demo.model;
+package com.JohnBieniek.Java26Demo.model.organization;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

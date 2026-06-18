@@ -1,4 +1,4 @@
-package com.JohnBieniek.Java26Demo.dto;
+package com.JohnBieniek.Java26Demo.dto.organization;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

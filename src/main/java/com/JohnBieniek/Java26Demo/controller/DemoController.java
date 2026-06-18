@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.model.Plane;
+import com.JohnBieniek.Java26Demo.model.animal.Beetle;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -18,12 +18,12 @@ public class DemoController {
     @RequestMapping(method = RequestMethod.GET, path = "/demoInterface")
     @Operation(
         summary = "Demonstrate a Java interface",
-        description = "Creates a Plane and calls the fly method defined by its interface."
+        description = "Creates a Beetle and calls the fly method defined by its sealed interface."
     )
     public String demoInterface() {
-        Plane plane = new Plane();
-        String result = "You launch the plane.: " + plane.fly();
-        logger.info("Launching the plane,: {}", plane.fly());
+        Beetle beetle = new Beetle();
+        String result = "The beetle takes flight: " + beetle.fly();
+        logger.info("The beetle takes flight: {}", beetle.fly());
         return result;
     }
 }
