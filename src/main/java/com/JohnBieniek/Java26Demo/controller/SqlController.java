@@ -1,12 +1,6 @@
 package com.JohnBieniek.Java26Demo.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,15 +8,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.JohnBieniek.Java26Demo.dto.AddEmployeeRequest;
-import com.JohnBieniek.Java26Demo.model.Employee;
-import com.JohnBieniek.Java26Demo.model.Team;
-import com.JohnBieniek.Java26Demo.repository.EmployeeRepository;
-import com.JohnBieniek.Java26Demo.repository.TeamRepository;
+import com.JohnBieniek.Java26Demo.manager.SqlManager;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -30,145 +22,135 @@ import jakarta.validation.constraints.NotNull;
 @Validated
 @RequestMapping(value = "/demo")
 public class SqlController {
-    private static final Logger logger = LoggerFactory.getLogger(SqlController.class);
+    private final SqlManager sqlManager;
 
-    private final EmployeeRepository employeeRepository;
-    private final TeamRepository teamRepository;
-    private final JdbcTemplate jdbcTemplate;
-
-    public SqlController(EmployeeRepository employeeRepository,
-                         TeamRepository teamRepository,
-                         JdbcTemplate jdbcTemplate) {
-        this.employeeRepository = employeeRepository;
-        this.teamRepository = teamRepository;
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/resetTeamsAndEmployees")
-    public String resetTeamsAndEmployees() {
-        employeeRepository.deleteAll();
-        teamRepository.deleteAll();
-
-        Team alpha = teamRepository.save(new Team("Alpha", "Seattle"));
-        Team beta = teamRepository.save(new Team("Beta", "Boston"));
-
-        employeeRepository.saveAll(List.of(
-            new Employee("Alice", "Engineering", 120000, 15000, "555-1001", null, alpha),
-            new Employee("Bob", "Engineering", 115000, 12000, null, null, alpha),
-            new Employee("Carol", "Sales", 95000, 10000, "555-1003", null, beta),
-            new Employee("Dave", "Sales", 90000, 8000, null, LocalDateTime.now(), beta),
-            new Employee("Eve", "HR", 85000, 7000, "555-1005", null, beta)
-        ));
-
-        long employeeCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM employee WHERE deleted_at IS NULL",
-                Long.class
-        );
-        long teamCount = teamRepository.count();
-
-        logger.info("Reset complete. Employees: {}, Teams: {}", employeeCount, teamCount);
-        return "Reset complete. Employees: " + employeeCount + ", Teams: " + teamCount;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/getHighlyCompensatedEmployees")
-    public String getHighlyCompensatedEmployees() {
-        String query = "SELECT e.name, t.name AS teamName, e.department, "
-                + "COALESCE(e.phone_number, 'No phone') AS phoneNumber, "
-                + "SUM(e.salary + e.bonus) AS totalCompensation "
-                + "FROM employee e "
-                + "JOIN team t ON e.team_id = t.id "
-                + "WHERE e.salary >= 90000 "
-                + "AND e.deleted_at IS NULL "
-                + "GROUP BY e.department, t.name, e.name, e.phone_number "
-                + "HAVING SUM(e.salary + e.bonus) >= 100000 "
-                + "ORDER BY totalCompensation DESC "
-                + "LIMIT 10";
-
-        List<String> rows = jdbcTemplate.query(
-            query,
-            (rs, rowNum) -> rs.getString("name") + " | "
-                    + rs.getString("teamName") + " | "
-                    + rs.getString("department") + " | "
-                    + rs.getString("phoneNumber") + " | "
-                    + rs.getInt("totalCompensation")
-        );
-
-        logger.info("SQL demo query result: {}", rows);
-        if(rows.isEmpty()) {
-            return "No highly compensated employees found. Run the reset endpoint to populate the database or add more employees with higher compensation.";
-        }
-        return rows.toString();
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/getDeletedEmployees")
-    public String getDeletedEmployees() {
-        String query = "SELECT e.name, e.deleted_at "
-                + "FROM employee e "
-                + "WHERE e.deleted_at IS NOT NULL";
-
-        List<String> rows = jdbcTemplate.query(
-            query,
-            (rs, rowNum) -> rs.getString("name") + " | deleted at " + rs.getTimestamp("deleted_at")
-        );
-
-        logger.info("Deleted employee query result: {}", rows);
-        return rows.toString();
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/getEmployeePhoneNumbers")
-    public String getEmployeePhoneNumbers() {
-        String query = "SELECT e.name, COALESCE(e.phone_number, 'No phone') AS phoneNumber "
-                + "FROM employee e "
-                + "WHERE e.deleted_at IS NULL "
-                + "ORDER BY e.name";
-
-        List<String> rows = jdbcTemplate.query(
-            query,
-            (rs, rowNum) -> rs.getString("name") + " | " + rs.getString("phoneNumber")
-        );
-
-        logger.info("Employee phone number query result: {}", rows);
-        return rows.toString();
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/addTeam")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String addTeam(@RequestParam @NotBlank String name, @RequestParam @NotBlank String location) {
-        Team team = teamRepository.save(new Team(name, location));
-        return "Team added successfully with id " + team.getId() + ".";
+    public SqlController(SqlManager sqlManager) {
+        this.sqlManager = sqlManager;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/addEmployee")
     @ResponseStatus(HttpStatus.CREATED)
     public String addEmployee(@Valid @ModelAttribute AddEmployeeRequest request) {
-        teamRepository.findById(request.getTeamId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found."));
+        return sqlManager.addEmployee(request);
+    }
 
-        String sql = "INSERT INTO employee (name, department, salary, bonus, phone_number, deleted_at, team_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    @RequestMapping(method = RequestMethod.POST, path = "/addProject")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+        summary = "Add a project",
+        description = "Creates a project and assigns it to an existing team."
+    )
+    public String addProject(
+            @RequestParam @NotBlank String name,
+            @RequestParam @Min(0) int budget,
+            @RequestParam @NotNull Long teamId) {
+        return sqlManager.addProject(name, budget, teamId);
+    }
 
-        jdbcTemplate.update(
-            sql,
-            request.getName(),
-            request.getDepartment(),
-            request.getSalary(),
-            request.getBonus(),
-            request.getPhoneNumber(),
-            null,
-            request.getTeamId()
-        );
-
-        return "Employee added successfully.";
+    @RequestMapping(method = RequestMethod.GET, path = "/addTeam")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String addTeam(@RequestParam @NotBlank String name, @RequestParam @NotBlank String location) {
+        return sqlManager.addTeam(name, location);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/deleteEmployee")
+    @Operation(description = "SQL injection is prevented by using parameterized queries with JdbcTemplate." +
+            " The employee is not actually deleted from the database, but marked as deleted by setting the deleted_at timestamp. " +
+            "This allows us to maintain data integrity and auditability while effectively removing the employee from active queries.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEmployee(@RequestParam @NotNull Long employeeId) {
-        String sql = "UPDATE employee SET deleted_at = ? WHERE id = ?";
-        int updated = jdbcTemplate.update(sql, LocalDateTime.now(), employeeId);
+        sqlManager.deleteEmployee(employeeId);
+    }
 
-        if (updated == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No employee found with id " + employeeId);
-        }
+    @RequestMapping(method = RequestMethod.GET, path = "/getAllEmployeesAndTeamsUnionAll")
+    @Operation(
+        summary = "Use UNION ALL to include unmatched employees and teams",
+        description = "The first SELECT uses LEFT JOIN to return every employee and any matching team. "
+                + "The second SELECT uses RIGHT JOIN with WHERE e.id IS NULL to return only teams "
+                + "that have no employees. UNION ALL combines these two result sets without repeating "
+                + "the employee/team matches already returned by the first SELECT."
+    )
+    public String getAllEmployeesAndTeamsUnionAll() {
+        return sqlManager.getAllEmployeesAndTeamsUnionAll();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getDeletedEmployees")
+    public String getDeletedEmployees() {
+        return sqlManager.getDeletedEmployees();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getDuplicateEmployeePhoneNumbers")
+    @Operation(
+        summary = "Detect duplicate employee phone numbers",
+        description = "ROW_NUMBER partitions active employees by phone number and orders each group by id. "
+                + "The outer query returns rows numbered greater than one, identifying duplicate records "
+                + "while retaining the first record in each group as the original."
+    )
+    public String getDuplicateEmployeePhoneNumbers() {
+        return sqlManager.getDuplicateEmployeePhoneNumbers();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getEmployeePhoneNumbers")
+    public String getEmployeePhoneNumbers() {
+        return sqlManager.getEmployeePhoneNumbers();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getEmployeesTeamsAndProjects")
+    @Operation(
+        summary = "Join employee, team, and project tables",
+        description = "Joins employees to their team, then joins each team to its projects. "
+                + "Only active employees with a matching team and project are returned."
+    )
+    public String getEmployeesTeamsAndProjects() {
+        return sqlManager.getEmployeesTeamsAndProjects();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getEmployeesWithTeamsInnerJoin")
+    @Operation(
+        summary = "Demonstrate SQL INNER JOIN where info is only returned if there is a match in both tables",
+        description = "Returns only employees that have a matching team."
+    )
+    public String getEmployeesWithTeamsInnerJoin() {
+        return sqlManager.getEmployeesWithTeamsInnerJoin();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getHighlyCompensatedEmployees")
+    @Operation(
+        summary = "Demonstrate SQL WHERE and HAVING",
+        description = "WHERE filters individual employee rows before grouping. "
+                + "HAVING filters grouped results after SUM is calculated."
+    )
+    public String getHighlyCompensatedEmployees() {
+        return sqlManager.getHighlyCompensatedEmployees();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getProjects")
+    @Operation(
+        summary = "Get all projects",
+        description = "Returns every project with its budget and assigned team."
+    )
+    public String getProjects() {
+        return sqlManager.getProjects();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getTeamEmployeeStatistics")
+    @Operation(description = "Demonstrate the use of COUNT, SUM, AVG, MIN, MAX, GROUP BY, and JOIN in SQL.")
+    public String getTeamEmployeeStatistics() {
+        return sqlManager.getTeamEmployeeStatistics();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/getTeamsAndEmployeesRightJoin")
+    @Operation(
+        summary = "Demonstrate SQL RIGHT JOIN returns all rows from the right table (teams) and matched rows from the left table (employees)",
+        description = "Returns every team, including teams without employees. "
+                + "Employee data is null when no employee matches the team."
+    )
+    public String getTeamsAndEmployeesRightJoin() {
+        return sqlManager.getTeamsAndEmployeesRightJoin();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/resetEmployeesTeamsAndProjects")
+    public String resetEmployeesTeamsAndProjects() {
+        return sqlManager.resetEmployeesTeamsAndProjects();
     }
 }
