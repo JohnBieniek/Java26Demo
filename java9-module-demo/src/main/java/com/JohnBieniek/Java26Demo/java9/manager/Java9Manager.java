@@ -5,15 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public class Java9Manager {
     private static final String DECLARED_MODULE_NAME = "com.JohnBieniek.Java26Demo.java.nine";
 
     /**
      * Demonstrates the Java 9 module system. Java9Manager is compiled in a dedicated
-     * JPMS module that exports this package and opens it to Spring.
+     * JPMS module that exports this package.
      */
     public String moduleDemo() {
         Module runtimeModule = Java9Manager.class.getModule();

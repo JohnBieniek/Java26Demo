@@ -12,7 +12,6 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(26)
 	}
-	modularity.inferModulePath = true
 }
 
 repositories {
@@ -47,17 +46,4 @@ generateJava {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-tasks.register('runModule', Exec) {
-	group = 'application'
-	description = 'Run the application as a real JPMS module'
-	dependsOn 'classes'
-	workingDir = projectDir
-	commandLine(
-		'java',
-		'--module-path', sourceSets.main.runtimeClasspath.asPath,
-		'--module', 'com.JohnBieniek.Java26Demo/com.JohnBieniek.Java26Demo.Java26DemoApplication',
-		'--server.port=8090'
-	)
 }
