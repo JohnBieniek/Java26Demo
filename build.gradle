@@ -33,6 +33,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-rest-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
@@ -46,4 +48,23 @@ generateJava {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 26
+
+    // Required only if you use Java 26 preview features.
+    options.compilerArgs += ['--enable-preview']
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+
+    // Required only if tests touch preview-feature code.
+    jvmArgs += ['--enable-preview']
+}
+
+tasks.named('bootRun') {
+    // Required only if you use Java 26 preview features.
+    jvmArgs += ['--enable-preview']
 }
