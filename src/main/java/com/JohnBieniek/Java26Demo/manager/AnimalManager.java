@@ -15,6 +15,16 @@ public class AnimalManager {
     private static final Logger logger = LoggerFactory.getLogger(AnimalManager.class);
 
     /**
+     * Demonstrates invoking a method declared by the sealed Flys interface.
+     */
+    public String demoInterface() {
+        Beetle beetle = new Beetle();
+        String flight = beetle.fly();
+        logger.info("The beetle takes flight: {}", flight);
+        return "The beetle takes flight: " + flight;
+    }
+
+    /**
      * Demonstrates a Java 15 text block for readable multiline text.
      */
     public String animalGuide() {
@@ -39,7 +49,7 @@ public class AnimalManager {
     }
 
     /**
-     * Demonstrates Java 16 pattern matching for {@code instanceof}, which tests a subtype
+     * Demonstrates Java 16 pattern matching for instanceof, which tests a subtype
      * and binds a typed variable without a separate cast.
      */
     public String identifyAnimal(AnimalType animalType) {

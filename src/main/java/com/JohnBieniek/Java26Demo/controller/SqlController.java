@@ -18,6 +18,7 @@ import com.JohnBieniek.Java26Demo.dto.organization.TeamEmployeeStatistics;
 import com.JohnBieniek.Java26Demo.manager.SqlManager;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -26,6 +27,7 @@ import jakarta.validation.constraints.NotNull;
 @RestController
 @Validated
 @RequestMapping(value = "/demo")
+@Tag(name = "SQL and Organization Controller", description = "CRUD and reporting endpoints over the in-memory employee, team, and project model. Demonstrations cover validated writes, soft deletion, parameterized queries, joins, unions, window functions, grouping, aggregates, and immutable record projections.")
 public class SqlController {
     private final SqlManager sqlManager;
 
@@ -35,6 +37,10 @@ public class SqlController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/addEmployee")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+        summary = "Add an employee to an existing team",
+        description = "Validates the submitted employee form, verifies its team relationship, and creates a new employee record with contact and compensation information. Returns a readable creation result."
+    )
     public String addEmployee(@Valid @ModelAttribute AddEmployeeRequest request) {
         return sqlManager.addEmployee(request);
     }
@@ -54,12 +60,16 @@ public class SqlController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/addTeam")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+        summary = "Add an organization team",
+        description = "Creates a team from a required name and location. The created team can then own employees and projects used by the join and aggregate demonstrations."
+    )
     public String addTeam(@RequestParam @NotBlank String name, @RequestParam @NotBlank String location) {
         return sqlManager.addTeam(name, location);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/deleteEmployee")
-    @Operation(description = "SQL injection is prevented by using parameterized queries with JdbcTemplate." +
+    @Operation(summary = "Soft-delete an employee safely", description = "SQL injection is prevented by using parameterized queries with JdbcTemplate." +
             " The employee is not actually deleted from the database, but marked as deleted by setting the deleted_at timestamp. " +
             "This allows us to maintain data integrity and auditability while effectively removing the employee from active queries.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -80,6 +90,10 @@ public class SqlController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getDeletedEmployees")
+    @Operation(
+        summary = "List soft-deleted employees",
+        description = "Returns employees whose deleted_at timestamp is populated, demonstrating how audit history remains queryable after records are removed from active employee results."
+    )
     public String getDeletedEmployees() {
         return sqlManager.getDeletedEmployees();
     }
@@ -96,6 +110,10 @@ public class SqlController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getEmployeePhoneNumbers")
+    @Operation(
+        summary = "List active employee phone numbers",
+        description = "Selects employee names and phone numbers while excluding soft-deleted records, providing the source data used by the duplicate-phone window-function demonstration."
+    )
     public String getEmployeePhoneNumbers() {
         return sqlManager.getEmployeePhoneNumbers();
     }
@@ -162,6 +180,10 @@ public class SqlController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/resetEmployeesTeamsAndProjects")
+    @Operation(
+        summary = "Reset organization demonstration data",
+        description = "Rebuilds the sample teams, employees, and projects in a known state so the CRUD, join, union, window-function, and aggregate endpoints produce repeatable portfolio results."
+    )
     public String resetEmployeesTeamsAndProjects() {
         return sqlManager.resetEmployeesTeamsAndProjects();
     }

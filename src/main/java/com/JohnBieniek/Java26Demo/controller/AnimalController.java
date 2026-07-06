@@ -13,12 +13,21 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping(value = "/animals")
-@Tag(name = "Animal Controller", description = "Endpoints for demoing interfaces, abstract classes, and final declarations with animals.")
+@Tag(name = "Animal Controller", description = "Animal-themed demonstrations of interfaces, abstract base classes, polymorphism, method overriding, static method hiding, switch expressions, pattern matching, text blocks, and sealed types across modern Java releases.")
 public class AnimalController {
     private final AnimalManager animalManager;
 
     public AnimalController(AnimalManager animalManager) {
         this.animalManager = animalManager;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/demoInterface")
+    @Operation(
+        summary = "Demonstrate a Java interface",
+        description = "Creates a Beetle through the animal service and calls the fly method defined by its sealed interface."
+    )
+    public String demoInterface() {
+        return animalManager.demoInterface();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/animalGuide")
@@ -43,16 +52,28 @@ public class AnimalController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feedBeetle")
+    @Operation(
+        summary = "Feed a Beetle through its Animal base type",
+        description = "Creates a Beetle referenced as Animal and invokes its eat implementation, demonstrating runtime polymorphism through an abstract base type."
+    )
     public String feedBeetle() {
         return animalManager.feedBeetle();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feedBird")
+    @Operation(
+        summary = "Feed a Bird through its Animal base type",
+        description = "Creates a Bird referenced as Animal and invokes its eat implementation, showing that the concrete override is selected at runtime."
+    )
     public String feedBird() {
         return animalManager.feedBird();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feedDog")
+    @Operation(
+        summary = "Feed a Dog through its Animal base type",
+        description = "Creates a Dog referenced as Animal and invokes its eat implementation to demonstrate subtype behavior through a common abstraction."
+    )
     public String feedDog() {
         return animalManager.feedDog();
     }
@@ -68,21 +89,37 @@ public class AnimalController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/petDog")
+    @Operation(
+        summary = "Invoke an overridden Dog method",
+        description = "Creates a Dog and calls its speak implementation, demonstrating ordinary method overriding and dynamic dispatch."
+    )
     public String petDog() {
         return animalManager.petDog();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/sedateBeetle")
+    @Operation(
+        summary = "Call inherited static sleep behavior for Beetle",
+        description = "Calls Beetle.sleep to demonstrate access to static behavior inherited from the Animal hierarchy."
+    )
     public String sedateBeetle() {
         return animalManager.sedateBeetle();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/sedateBird")
+    @Operation(
+        summary = "Call inherited static sleep behavior for Bird",
+        description = "Calls Bird.sleep to demonstrate access to static behavior inherited from the Animal hierarchy."
+    )
     public String sedateBird() {
         return animalManager.sedateBird();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/sedateDog")
+    @Operation(
+        summary = "Demonstrate static method hiding with Dog",
+        description = "Calls Dog.sleep, whose declaration hides the Animal static method, illustrating that static dispatch follows the referenced class rather than runtime polymorphism."
+    )
     public String sedateDog() {
         return animalManager.sedateDog();
     }

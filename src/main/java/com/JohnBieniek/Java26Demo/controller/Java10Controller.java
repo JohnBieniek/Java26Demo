@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/java10")
-@Tag(name = "Java 10 Controller", description = "Endpoints demonstrating Java 10 features.")
+@Tag(name = "Java 10 Controller", description = "A focused demonstration of Java 10 local-variable type inference with var, showing inferred local types while preserving Java's compile-time static typing.")
 public class Java10Controller {
     private final Java10Manager java10Manager;
 

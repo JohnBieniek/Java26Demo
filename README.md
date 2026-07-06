@@ -62,11 +62,13 @@ Run the tests:
 .\gradlew.bat test
 ```
 
-Create an executable Spring Boot JAR:
+Create an executable Spring Boot JAR and deployment archive for manual upload to AWS Beanstalk:
 
 ```powershell
-.\gradlew.bat bootJar
+.\build-deploy.bat
 ```
+
+The script increments the patch number stored in `.deploy-version` only after a successful build, passes that version to Gradle, recreates `eb-deploy`, and writes the upload-ready `deploy.zip` archive.
 
 Then run the generated JAR from `build/libs`:
 

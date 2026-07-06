@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.JohnBieniek'
-version = '0.0.1-SNAPSHOT'
+version = providers.gradleProperty('appVersion').getOrElse('0.0.1-SNAPSHOT')
 
 java {
 	toolchain {
@@ -54,17 +54,17 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 26
 
     // Required only if you use Java 26 preview features.
-    options.compilerArgs += ['--enable-preview']
+    options.compilerArgs += ['--enable-preview', '--add-modules', 'jdk.incubator.vector']
 }
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 
     // Required only if tests touch preview-feature code.
-    jvmArgs += ['--enable-preview']
+    jvmArgs += ['--enable-preview', '--add-modules', 'jdk.incubator.vector']
 }
 
 tasks.named('bootRun') {
     // Required only if you use Java 26 preview features.
-    jvmArgs += ['--enable-preview']
+    jvmArgs += ['--enable-preview', '--add-modules', 'jdk.incubator.vector']
 }

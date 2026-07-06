@@ -1,84 +1,71 @@
 package com.JohnBieniek.Java26Demo.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;  
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.model.animal.Beetle;
+import com.JohnBieniek.Java26Demo.manager.Java8Manager;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping(value = "/demo")
-public class Java8Controller {	
-    private static final Logger logger = LoggerFactory.getLogger(Java8Controller.class);
+@Tag(name = "Java 8 Controller", description = "Focused demonstrations of Java 8 lambdas, method references, default interface methods, streams, reductions, forEach processing, and Optional fallback behavior.")
+public class Java8Controller {
+    private final Java8Manager java8Manager;
+
+    public Java8Controller(Java8Manager java8Manager) {
+        this.java8Manager = java8Manager;
+    }
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoLambda")
-    public String demoLambdaStringDoubling(String input){
-        Function<String, String> runnable = (currentInput) -> {
-            String updatedResult = currentInput + "&" + currentInput; // double the input string
-            logger.info("Running the lambda with input: {} and result: {}", currentInput, updatedResult);
-            return updatedResult;
-        };  
-        return runnable.apply(input);
+    @Operation(
+            summary = "Transform input with a Java 8 lambda",
+            description = "Passes the supplied string to a Function lambda that duplicates the value with an ampersand separator and returns the transformed result.")
+    public String demoLambdaStringDoubling(String input) {
+        return java8Manager.demoLambdaStringDoubling(input);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoForEachLambda")
-    public String demoForEachLambda(){
-        StringBuilder updatedResult = new StringBuilder();
-        ArrayList<String> names = new ArrayList<>(List.of("Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy"));
-
-        names.forEach(name -> {
-            if(updatedResult.length() > 0){
-                updatedResult.append("&");
-            }
-            updatedResult.append(name);
-            logger.info("Running the lambda with input: {} and result: {}", name, updatedResult);
-        });
-
-        return "Names processed with forEach lambda: " + updatedResult;
+    @Operation(
+            summary = "Process a collection with forEach and a lambda",
+            description = "Iterates over a demonstration list with Iterable.forEach, appends each name to a shared result, and returns the completed encounter order.")
+    public String demoForEachLambda() {
+        return java8Manager.demoForEachLambda();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoDefaultInterfaceMethod")
-    public String demoDefaultInterfaceMethod(){
-        Beetle beetle = new Beetle();
-        String result = beetle.describeFlight() + " " + beetle.fly();
-        logger.info("Default interface demo: {}", result);
-        return result;
+    @Operation(
+            summary = "Invoke a Java 8 default interface method",
+            description = "Creates a Beetle and combines behavior supplied by a default interface method with the class's concrete fly implementation.")
+    public String demoDefaultInterfaceMethod() {
+        return java8Manager.demoDefaultInterfaceMethod();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoMethodReference")
-    public String demoMethodReference(){
-        List<String> names = List.of("Alice", "Bob", "Charlie");
-
-        String result = names.stream()
-            .map(String::toUpperCase)// method reference to convert each name to uppercase instead of name - > name.toUpperCase()
-            .reduce((a, b) -> a + ", " + b)
-            .orElse("No names");
-
-        logger.info("Method reference demo: {}", result);
-        return result;
+    @Operation(
+            summary = "Map stream values with a method reference",
+            description = "Uses String::toUpperCase instead of an equivalent lambda, then reduces the uppercase names into one comma-separated result.")
+    public String demoMethodReference() {
+        return java8Manager.demoMethodReference();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoStreamFilterAndReduce")
-    public String demoStreamFilterAndReduce(){
-        List<String> names = List.of("Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy");
-        String result = names.stream()
-            .filter(name -> name.startsWith("A") || name.startsWith("E") || name.startsWith("I") || name.startsWith("O") || name.startsWith("U")) // filter names that start with a vowel
-            .map(name -> name.toUpperCase()) // convert to uppercase
-            .reduce((name1, name2) -> name1 + " & " + name2) // concatenate with &
-            .orElse("No names found"); // default if no names match
-        return "Names starting with a vowel from A-I, filtered with a stream:"+result;
+    @Operation(
+            summary = "Filter, map, and reduce a Java 8 stream",
+            description = "Filters names that begin with a vowel, maps them to uppercase, and reduces the resulting stream into one ampersand-separated string.")
+    public String demoStreamFilterAndReduce() {
+        return java8Manager.demoStreamFilterAndReduce();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/testOptional")
-    public String testOptional(Optional<String> input){
-        String result = input.orElse("No input") + " complete";
-        return result;
+    @Operation(
+            summary = "Use Optional to provide a fallback value",
+            description = "Returns the supplied optional string when present or a manager-owned default when empty, demonstrating Optional.orElse without null branching in the controller.")
+    public String testOptional(Optional<String> input) {
+        return java8Manager.testOptional(input);
     }
 }

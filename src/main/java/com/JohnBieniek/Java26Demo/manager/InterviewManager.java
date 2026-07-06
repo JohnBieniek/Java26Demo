@@ -8,12 +8,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class InterviewManager {
+    private static final String DEFAULT_NON_REPEATING_INPUT = "bcaadcb";
+    private static final String DEFAULT_UNIQUE_SUBSTRING_INPUT = "bcaadacbaa";
+
     /**
      * Demonstrates a sliding window algorithm to find the longest substring without repeating characters.
      * @param input
      * @return Longest substring of non repeating characters
      */
     public String largestNonRepeatingSubstring(String input) {
+        input = input == null || input.isEmpty() ? DEFAULT_NON_REPEATING_INPUT : input;
         String biggestString = "";
         int start = 0;
 
@@ -42,6 +46,7 @@ public class InterviewManager {
      * @return
      */
     public int largestSubstringLengthWithoutDuplicates(String input) {
+        input = input == null || input.isEmpty() ? DEFAULT_UNIQUE_SUBSTRING_INPUT : input;
         int left = 0;
         int longest=0;
         Character currentString = ' ';

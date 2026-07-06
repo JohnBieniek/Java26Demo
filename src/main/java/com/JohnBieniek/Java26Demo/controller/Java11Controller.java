@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/java11")
-@Tag(name = "Java 11 Controller", description = "Endpoints demonstrating Java 11 features.")
+@Tag(name = "Java 11 Controller", description = "Runnable Java 11 demonstrations covering the standardized HTTP Client, String whitespace and line-processing methods, and Optional.isEmpty with deterministic local behavior and optional inputs.")
 public class Java11Controller {
     private final Java11Manager java11Manager;
 

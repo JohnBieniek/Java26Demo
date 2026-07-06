@@ -1,6 +1,8 @@
 module com.JohnBieniek.Java26Demo {
     requires java.net.http;
+    requires java.management;
     requires jdk.httpserver;
+    requires jdk.incubator.vector;
 
     requires spring.boot;
     requires spring.boot.autoconfigure;
@@ -21,6 +23,7 @@ module com.JohnBieniek.Java26Demo {
 
     opens com.JohnBieniek.Java26Demo to spring.core, spring.beans, spring.context;
     opens com.JohnBieniek.Java26Demo.controller to spring.core, spring.beans, spring.context, spring.web;
+    opens com.JohnBieniek.Java26Demo.client to spring.core, spring.beans, spring.context;
     opens com.JohnBieniek.Java26Demo.manager to spring.core, spring.beans, spring.context;
     opens com.JohnBieniek.Java26Demo.model.organization to spring.core, spring.beans, org.hibernate.orm.core;
     opens com.JohnBieniek.Java26Demo.dto.organization to spring.core, spring.beans;

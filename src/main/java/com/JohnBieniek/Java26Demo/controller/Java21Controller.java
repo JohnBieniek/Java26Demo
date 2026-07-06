@@ -20,7 +20,7 @@ import jakarta.validation.constraints.NotNull;
 @RestController
 @Validated
 @RequestMapping("/java21")
-@Tag(name = "Java 21 Controller", description = "Endpoints demonstrating permanent Java 21 language and runtime features.")
+@Tag(name = "Java 21 Controller", description = "Demonstrations of permanent Java 21 features: nested record patterns with guarded switch cases, virtual-thread-per-task processing of blocking workloads, and the unified SequencedCollection encounter-order API.")
 public class Java21Controller {
     private final Java21Manager java21Manager;
 

@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/java9")
-@Tag(name = "Java 9 Controller", description = "Endpoints demonstrating Java 9 features.")
+@Tag(name = "Java 9 Controller", description = "Demonstrations of the Java Platform Module System through a separate named module and the concise immutable List.of, Set.of, and Map.of collection factories introduced in Java 9.")
 public class Java9Controller {
     private final Java9ModuleManager java9ModuleManager;
 
