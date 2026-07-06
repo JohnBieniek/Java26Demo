@@ -15,7 +15,7 @@ import com.JohnBieniek.Java26Demo.dto.organization.AddEmployeeRequest;
 import com.JohnBieniek.Java26Demo.dto.organization.EmployeeProjectAssignment;
 import com.JohnBieniek.Java26Demo.dto.organization.ProjectSummary;
 import com.JohnBieniek.Java26Demo.dto.organization.TeamEmployeeStatistics;
-import com.JohnBieniek.Java26Demo.manager.SqlManager;
+import com.JohnBieniek.Java26Demo.service.SqlService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,10 +29,10 @@ import jakarta.validation.constraints.NotNull;
 @RequestMapping(value = "/demo")
 @Tag(name = "SQL and Organization Controller", description = "CRUD and reporting endpoints over the in-memory employee, team, and project model. Demonstrations cover validated writes, soft deletion, parameterized queries, joins, unions, window functions, grouping, aggregates, and immutable record projections.")
 public class SqlController {
-    private final SqlManager sqlManager;
+    private final SqlService sqlService;
 
-    public SqlController(SqlManager sqlManager) {
-        this.sqlManager = sqlManager;
+    public SqlController(SqlService sqlService) {
+        this.sqlService = sqlService;
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/addEmployee")
@@ -42,7 +42,7 @@ public class SqlController {
         description = "Validates the submitted employee form, verifies its team relationship, and creates a new employee record with contact and compensation information. Returns a readable creation result."
     )
     public String addEmployee(@Valid @ModelAttribute AddEmployeeRequest request) {
-        return sqlManager.addEmployee(request);
+        return sqlService.addEmployee(request);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/addProject")
@@ -55,7 +55,7 @@ public class SqlController {
             @RequestParam @NotBlank String name,
             @RequestParam @Min(0) int budget,
             @RequestParam @NotNull Long teamId) {
-        return sqlManager.addProject(name, budget, teamId);
+        return sqlService.addProject(name, budget, teamId);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/addTeam")
@@ -65,7 +65,7 @@ public class SqlController {
         description = "Creates a team from a required name and location. The created team can then own employees and projects used by the join and aggregate demonstrations."
     )
     public String addTeam(@RequestParam @NotBlank String name, @RequestParam @NotBlank String location) {
-        return sqlManager.addTeam(name, location);
+        return sqlService.addTeam(name, location);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/deleteEmployee")
@@ -74,7 +74,7 @@ public class SqlController {
             "This allows us to maintain data integrity and auditability while effectively removing the employee from active queries.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEmployee(@RequestParam @NotNull Long employeeId) {
-        sqlManager.deleteEmployee(employeeId);
+        sqlService.deleteEmployee(employeeId);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getAllEmployeesAndTeamsUnionAll")
@@ -86,7 +86,7 @@ public class SqlController {
                 + "the employee/team matches already returned by the first SELECT."
     )
     public String getAllEmployeesAndTeamsUnionAll() {
-        return sqlManager.getAllEmployeesAndTeamsUnionAll();
+        return sqlService.getAllEmployeesAndTeamsUnionAll();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getDeletedEmployees")
@@ -95,7 +95,7 @@ public class SqlController {
         description = "Returns employees whose deleted_at timestamp is populated, demonstrating how audit history remains queryable after records are removed from active employee results."
     )
     public String getDeletedEmployees() {
-        return sqlManager.getDeletedEmployees();
+        return sqlService.getDeletedEmployees();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getDuplicateEmployeePhoneNumbers")
@@ -106,7 +106,7 @@ public class SqlController {
                 + "while retaining the first record in each group as the original."
     )
     public String getDuplicateEmployeePhoneNumbers() {
-        return sqlManager.getDuplicateEmployeePhoneNumbers();
+        return sqlService.getDuplicateEmployeePhoneNumbers();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getEmployeePhoneNumbers")
@@ -115,7 +115,7 @@ public class SqlController {
         description = "Selects employee names and phone numbers while excluding soft-deleted records, providing the source data used by the duplicate-phone window-function demonstration."
     )
     public String getEmployeePhoneNumbers() {
-        return sqlManager.getEmployeePhoneNumbers();
+        return sqlService.getEmployeePhoneNumbers();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getEmployeesTeamsAndProjects")
@@ -126,7 +126,7 @@ public class SqlController {
                 + "Each result is represented by an immutable Java record, a permanent feature since Java 16."
     )
     public List<EmployeeProjectAssignment> getEmployeesTeamsAndProjects() {
-        return sqlManager.getEmployeesTeamsAndProjects();
+        return sqlService.getEmployeesTeamsAndProjects();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getEmployeesWithTeamsInnerJoin")
@@ -135,7 +135,7 @@ public class SqlController {
         description = "Returns only employees that have a matching team."
     )
     public String getEmployeesWithTeamsInnerJoin() {
-        return sqlManager.getEmployeesWithTeamsInnerJoin();
+        return sqlService.getEmployeesWithTeamsInnerJoin();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getHighlyCompensatedEmployees")
@@ -145,7 +145,7 @@ public class SqlController {
                 + "HAVING filters grouped results after SUM is calculated."
     )
     public String getHighlyCompensatedEmployees() {
-        return sqlManager.getHighlyCompensatedEmployees();
+        return sqlService.getHighlyCompensatedEmployees();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getProjects")
@@ -155,7 +155,7 @@ public class SqlController {
                 + "Records became a permanent Java feature in Java 16."
     )
     public List<ProjectSummary> getProjects() {
-        return sqlManager.getProjects();
+        return sqlService.getProjects();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getTeamEmployeeStatistics")
@@ -166,7 +166,7 @@ public class SqlController {
                 + "a permanent Java feature since Java 16."
     )
     public List<TeamEmployeeStatistics> getTeamEmployeeStatistics() {
-        return sqlManager.getTeamEmployeeStatistics();
+        return sqlService.getTeamEmployeeStatistics();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getTeamsAndEmployeesRightJoin")
@@ -176,7 +176,7 @@ public class SqlController {
                 + "Employee data is null when no employee matches the team."
     )
     public String getTeamsAndEmployeesRightJoin() {
-        return sqlManager.getTeamsAndEmployeesRightJoin();
+        return sqlService.getTeamsAndEmployeesRightJoin();
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/resetEmployeesTeamsAndProjects")
@@ -185,7 +185,7 @@ public class SqlController {
         description = "Rebuilds the sample teams, employees, and projects in a known state so the CRUD, join, union, window-function, and aggregate endpoints produce repeatable portfolio results."
     )
     public String resetEmployeesTeamsAndProjects() {
-        return sqlManager.resetEmployeesTeamsAndProjects();
+        return sqlService.resetEmployeesTeamsAndProjects();
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/updateEmployee")
@@ -197,6 +197,6 @@ public class SqlController {
     public String updateEmployee(
             @RequestParam @NotNull Long employeeId,
             @Valid @ModelAttribute AddEmployeeRequest request) {
-        return sqlManager.updateEmployee(employeeId, request);
+        return sqlService.updateEmployee(employeeId, request);
     }
 }

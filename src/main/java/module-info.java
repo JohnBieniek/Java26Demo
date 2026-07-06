@@ -14,6 +14,8 @@ module com.JohnBieniek.Java26Demo {
     requires spring.data.jpa;
     requires spring.data.commons;
     requires spring.tx;
+    requires spring.batch.core;
+    requires spring.batch.infrastructure;
     requires org.hibernate.orm.core;
     requires jakarta.persistence;
     requires jakarta.validation;
@@ -24,11 +26,12 @@ module com.JohnBieniek.Java26Demo {
     opens com.JohnBieniek.Java26Demo to spring.core, spring.beans, spring.context;
     opens com.JohnBieniek.Java26Demo.controller to spring.core, spring.beans, spring.context, spring.web;
     opens com.JohnBieniek.Java26Demo.client to spring.core, spring.beans, spring.context;
-    opens com.JohnBieniek.Java26Demo.manager to spring.core, spring.beans, spring.context;
+    opens com.JohnBieniek.Java26Demo.batch to spring.core, spring.beans, spring.context;
+    opens com.JohnBieniek.Java26Demo.service to spring.core, spring.beans, spring.context;
     opens com.JohnBieniek.Java26Demo.model.organization to spring.core, spring.beans, org.hibernate.orm.core;
     opens com.JohnBieniek.Java26Demo.dto.organization to spring.core, spring.beans;
 
     exports com.JohnBieniek.Java26Demo;
     exports com.JohnBieniek.Java26Demo.controller;
-    exports com.JohnBieniek.Java26Demo.manager;
+    exports com.JohnBieniek.Java26Demo.service;
 }

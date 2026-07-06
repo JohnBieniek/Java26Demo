@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.manager.Java9ModuleManager;
+import com.JohnBieniek.Java26Demo.service.Java9ModuleService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,10 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/java9")
 @Tag(name = "Java 9 Controller", description = "Demonstrations of the Java Platform Module System through a separate named module and the concise immutable List.of, Set.of, and Map.of collection factories introduced in Java 9.")
 public class Java9Controller {
-    private final Java9ModuleManager java9ModuleManager;
+    private final Java9ModuleService java9ModuleService;
 
-    public Java9Controller(Java9ModuleManager java9ModuleManager) {
-        this.java9ModuleManager = java9ModuleManager;
+    public Java9Controller(Java9ModuleService java9ModuleService) {
+        this.java9ModuleService = java9ModuleService;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/moduleDemo")
@@ -26,16 +26,16 @@ public class Java9Controller {
                 + "--module-path and --module, then reports its runtime module name and named-module status."
     )
     public String moduleDemo() {
-        return java9ModuleManager.moduleDemo();
+        return java9ModuleService.moduleDemo();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/immutableCollectionsDemo")
     @Operation(
         summary = "Demonstrate Java 9 collection factory methods",
-        description = "Uses the manager compiled in the Java 9 module to create compact unmodifiable "
+        description = "Uses the service wrapper around the Java 9 module to create compact unmodifiable "
                 + "collections with List.of, Set.of, and Map.of."
     )
     public String immutableCollectionsDemo() {
-        return java9ModuleManager.immutableCollectionsDemo();
+        return java9ModuleService.immutableCollectionsDemo();
     }
 }

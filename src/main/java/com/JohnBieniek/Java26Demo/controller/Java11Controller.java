@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.manager.Java11Manager;
+import com.JohnBieniek.Java26Demo.service.Java11Service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,10 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/java11")
 @Tag(name = "Java 11 Controller", description = "Runnable Java 11 demonstrations covering the standardized HTTP Client, String whitespace and line-processing methods, and Optional.isEmpty with deterministic local behavior and optional inputs.")
 public class Java11Controller {
-    private final Java11Manager java11Manager;
+    private final Java11Service java11Service;
 
-    public Java11Controller(Java11Manager java11Manager) {
-        this.java11Manager = java11Manager;
+    public Java11Controller(Java11Service java11Service) {
+        this.java11Service = java11Service;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/httpClientDemo")
@@ -27,7 +27,7 @@ public class Java11Controller {
                 + "and HttpResponse. The demo is deterministic and does not require internet access."
     )
     public String httpClientDemo() {
-        return java11Manager.httpClientDemo();
+        return java11Service.httpClientDemo();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/stringMethodsDemo")
@@ -37,7 +37,7 @@ public class Java11Controller {
                 + "when input is omitted."
     )
     public String stringMethodsDemo(@RequestParam(required = false) String input) {
-        return java11Manager.stringMethodsDemo(input);
+        return java11Service.stringMethodsDemo(input);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/optionalIsEmptyDemo")
@@ -46,6 +46,6 @@ public class Java11Controller {
         description = "Builds an Optional from the input and uses isEmpty to distinguish missing or blank values."
     )
     public String optionalIsEmptyDemo(@RequestParam(required = false) String value) {
-        return java11Manager.optionalIsEmptyDemo(value);
+        return java11Service.optionalIsEmptyDemo(value);
     }
 }

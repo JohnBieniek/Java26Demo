@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.manager.AnimalManager;
+import com.JohnBieniek.Java26Demo.service.AnimalService;
 import com.JohnBieniek.Java26Demo.model.animal.AnimalType;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,10 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping(value = "/animals")
 @Tag(name = "Animal Controller", description = "Animal-themed demonstrations of interfaces, abstract base classes, polymorphism, method overriding, static method hiding, switch expressions, pattern matching, text blocks, and sealed types across modern Java releases.")
 public class AnimalController {
-    private final AnimalManager animalManager;
+    private final AnimalService animalService;
 
-    public AnimalController(AnimalManager animalManager) {
-        this.animalManager = animalManager;
+    public AnimalController(AnimalService animalService) {
+        this.animalService = animalService;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/demoInterface")
@@ -27,7 +27,7 @@ public class AnimalController {
         description = "Creates a Beetle through the animal service and calls the fly method defined by its sealed interface."
     )
     public String demoInterface() {
-        return animalManager.demoInterface();
+        return animalService.demoInterface();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/animalGuide")
@@ -37,7 +37,7 @@ public class AnimalController {
                 + "in Java 15 and avoid manually concatenating strings or escaping newline characters."
     )
     public String animalGuide() {
-        return animalManager.animalGuide();
+        return animalService.animalGuide();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/describeAnimal")
@@ -48,7 +48,7 @@ public class AnimalController {
                 + "that do not fall through, and requires every enum value to be handled."
     )
     public String describeAnimal(@RequestParam AnimalType animalType) {
-        return animalManager.describeAnimal(animalType);
+        return animalService.describeAnimal(animalType);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feedBeetle")
@@ -57,7 +57,7 @@ public class AnimalController {
         description = "Creates a Beetle referenced as Animal and invokes its eat implementation, demonstrating runtime polymorphism through an abstract base type."
     )
     public String feedBeetle() {
-        return animalManager.feedBeetle();
+        return animalService.feedBeetle();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feedBird")
@@ -66,7 +66,7 @@ public class AnimalController {
         description = "Creates a Bird referenced as Animal and invokes its eat implementation, showing that the concrete override is selected at runtime."
     )
     public String feedBird() {
-        return animalManager.feedBird();
+        return animalService.feedBird();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feedDog")
@@ -75,7 +75,7 @@ public class AnimalController {
         description = "Creates a Dog referenced as Animal and invokes its eat implementation to demonstrate subtype behavior through a common abstraction."
     )
     public String feedDog() {
-        return animalManager.feedDog();
+        return animalService.feedDog();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/identifyAnimal")
@@ -85,7 +85,7 @@ public class AnimalController {
                 + "and binds a correctly typed Beetle, Bird, or Dog variable without requiring a separate cast."
     )
     public String identifyAnimal(@RequestParam AnimalType animalType) {
-        return animalManager.identifyAnimal(animalType);
+        return animalService.identifyAnimal(animalType);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/petDog")
@@ -94,7 +94,7 @@ public class AnimalController {
         description = "Creates a Dog and calls its speak implementation, demonstrating ordinary method overriding and dynamic dispatch."
     )
     public String petDog() {
-        return animalManager.petDog();
+        return animalService.petDog();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/sedateBeetle")
@@ -103,7 +103,7 @@ public class AnimalController {
         description = "Calls Beetle.sleep to demonstrate access to static behavior inherited from the Animal hierarchy."
     )
     public String sedateBeetle() {
-        return animalManager.sedateBeetle();
+        return animalService.sedateBeetle();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/sedateBird")
@@ -112,7 +112,7 @@ public class AnimalController {
         description = "Calls Bird.sleep to demonstrate access to static behavior inherited from the Animal hierarchy."
     )
     public String sedateBird() {
-        return animalManager.sedateBird();
+        return animalService.sedateBird();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/sedateDog")
@@ -121,7 +121,7 @@ public class AnimalController {
         description = "Calls Dog.sleep, whose declaration hides the Animal static method, illustrating that static dispatch follows the referenced class rather than runtime polymorphism."
     )
     public String sedateDog() {
-        return animalManager.sedateDog();
+        return animalService.sedateDog();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/shooBeetle")
@@ -131,7 +131,7 @@ public class AnimalController {
                 + "Beetle implements the sealed Flys interface, which permits only Beetle and Bird implementations."
     )
     public String shooBeetle() {
-        return animalManager.shooBeetle();
+        return animalService.shooBeetle();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/shooBird")
@@ -141,7 +141,7 @@ public class AnimalController {
                 + "Bird implements the sealed Flys interface, which permits only Beetle and Bird implementations."
     )
     public String shooBird() {
-        return animalManager.shooBird();
+        return animalService.shooBird();
     }
 
 }

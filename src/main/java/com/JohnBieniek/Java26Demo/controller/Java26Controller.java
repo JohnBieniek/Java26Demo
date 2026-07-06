@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.JohnBieniek.Java26Demo.manager.Java26Manager;
+import com.JohnBieniek.Java26Demo.service.Java26Service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,10 +21,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
         description = "Runnable demonstrations of Java 26 language, library, concurrency, security, runtime, "
                 + "and performance features. Preview and incubator examples run with the required JVM flags.")
 public class Java26Controller {
-    private final Java26Manager java26Manager;
+    private final Java26Service java26Service;
 
-    public Java26Controller(Java26Manager java26Manager) {
-        this.java26Manager = java26Manager;
+    public Java26Controller(Java26Service java26Service) {
+        this.java26Service = java26Service;
     }
 
     @GetMapping(value = "/http3Demo", produces = "text/plain")
@@ -34,7 +34,7 @@ public class Java26Controller {
                     + "protocol, status code, and elapsed time. HTTP/3 is opportunistic, so the reported protocol "
                     + "may be HTTP/2 or HTTP/1.1. When url is omitted, Java26Client supplies its default HTTPS URL.")
     public String http3Demo(@RequestParam(required = false) String url) {
-        return java26Manager.http3Demo(url);
+        return java26Service.http3Demo(url);
     }
 
     @GetMapping(value = "/primitiveSwitchDemo", produces = "text/plain")
@@ -43,7 +43,7 @@ public class Java26Controller {
             description = "Switches directly on a long. Zero and one use constant cases, values exactly "
                     + "representable as int match case int, and remaining values match case long.")
     public String primitiveSwitchDemo(@RequestParam long value) {
-        return java26Manager.primitiveSwitchDemo(value);
+        return java26Service.primitiveSwitchDemo(value);
     }
 
     @GetMapping(value = "/lazyConstantDemo", produces = "text/plain")
@@ -52,7 +52,7 @@ public class Java26Controller {
             description = "Creates a final LazyConstant, observes its uninitialized state, accesses it twice, "
                     + "and reports that its supplier ran once and both accesses returned the same value.")
     public String lazyConstantDemo() {
-        return java26Manager.lazyConstantDemo();
+        return java26Service.lazyConstantDemo();
     }
 
     @GetMapping("/structuredConcurrencyDemo")
@@ -62,7 +62,7 @@ public class Java26Controller {
                     + "StructuredTaskScope. The scope joins them as a unit and returns either all results or a "
                     + "single clean failure response, preserving interruption and cancellation semantics.")
     public Map<String, Object> structuredConcurrencyDemo() {
-        return java26Manager.structuredConcurrencyDemo();
+        return java26Service.structuredConcurrencyDemo();
     }
 
     @GetMapping(value = "/pemDemo", produces = "text/plain")
@@ -71,7 +71,7 @@ public class Java26Controller {
             description = "Generates a 2048-bit RSA key pair, encodes its public key with PEMEncoder, decodes it "
                     + "with PEMDecoder, and compares the original and decoded binary key encodings.")
     public String pemDemo() {
-        return java26Manager.pemDemo();
+        return java26Service.pemDemo();
     }
 
     @GetMapping(value = "/finalFieldMutationWarningDemo", produces = "text/plain")
@@ -81,7 +81,7 @@ public class Java26Controller {
                     + "whether mutation occurred or was denied; Java 26 warns about permitted mutations by default "
                     + "in preparation for stronger integrity enforcement in future releases.")
     public String finalFieldMutationWarningDemo() {
-        return java26Manager.finalFieldMutationWarningDemo();
+        return java26Service.finalFieldMutationWarningDemo();
     }
 
     @GetMapping("/vectorApiDemo")
@@ -91,7 +91,7 @@ public class Java26Controller {
                     + "API. Returns the preferred vector width, lane count, illustrative timings, sample output, "
                     + "and confirmation that both implementations produced identical results.")
     public Map<String, Object> vectorApiDemo() {
-        return java26Manager.vectorApiDemo();
+        return java26Service.vectorApiDemo();
     }
 
     @GetMapping("/aotInfo")
@@ -101,7 +101,7 @@ public class Java26Controller {
                     + "version, VM name, active garbage collectors, AOT/archive-related JVM arguments, and whether "
                     + "any explicit AOT arguments were detected.")
     public Map<String, Object> aotInfo() {
-        return java26Manager.aotInfo();
+        return java26Service.aotInfo();
     }
 
     @GetMapping(value = "/appletRemovalDemo", produces = "text/plain")
@@ -110,6 +110,6 @@ public class Java26Controller {
             description = "Attempts to load java.applet.Applet by name. A standard Java 26 runtime throws "
                     + "ClassNotFoundException because the obsolete Applet API has been removed.")
     public String appletRemovalDemo() {
-        return java26Manager.appletRemovalDemo();
+        return java26Service.appletRemovalDemo();
     }
 }

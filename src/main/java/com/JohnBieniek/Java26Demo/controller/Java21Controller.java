@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.JohnBieniek.Java26Demo.dto.java21.LargeInputProcessingResult;
 import com.JohnBieniek.Java26Demo.dto.java21.SequencedCollectionResult;
-import com.JohnBieniek.Java26Demo.manager.Java21Manager;
+import com.JohnBieniek.Java26Demo.service.Java21Service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,10 +22,10 @@ import jakarta.validation.constraints.NotNull;
 @RequestMapping("/java21")
 @Tag(name = "Java 21 Controller", description = "Demonstrations of permanent Java 21 features: nested record patterns with guarded switch cases, virtual-thread-per-task processing of blocking workloads, and the unified SequencedCollection encounter-order API.")
 public class Java21Controller {
-    private final Java21Manager java21Manager;
+    private final Java21Service java21Service;
 
-    public Java21Controller(Java21Manager java21Manager) {
-        this.java21Manager = java21Manager;
+    public Java21Controller(Java21Service java21Service) {
+        this.java21Service = java21Service;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getEmployeeProjectAssignmentDescription")
@@ -40,7 +40,7 @@ public class Java21Controller {
     public String getEmployeeProjectAssignmentDescription(
             @RequestParam @NotNull Long employeeId,
             @RequestParam @NotNull Long projectId) {
-        return java21Manager.getEmployeeProjectAssignmentDescription(employeeId, projectId);
+        return java21Service.getEmployeeProjectAssignmentDescription(employeeId, projectId);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/processLargeInput")
@@ -53,7 +53,7 @@ public class Java21Controller {
                 + "When the request body is missing or blank, repeated Lorem Ipsum text is used."
     )
     public LargeInputProcessingResult processLargeInput(@RequestBody(required = false) String input) {
-        return java21Manager.processLargeInput(input);
+        return java21Service.processLargeInput(input);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/sequencedCollectionDemo")
@@ -66,6 +66,6 @@ public class Java21Controller {
     )
     public SequencedCollectionResult sequencedCollectionDemo(
             @RequestParam(required = false) List<String> values) {
-        return java21Manager.sequencedCollectionDemo(values);
+        return java21Service.sequencedCollectionDemo(values);
     }
 }
