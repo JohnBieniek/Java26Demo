@@ -11,6 +11,7 @@ module com.JohnBieniek.Java26Demo {
     requires spring.beans;
     requires spring.core;
     requires spring.webmvc;
+    requires spring.graphql;
     requires spring.data.jpa;
     requires spring.data.commons;
     requires spring.tx;
@@ -30,6 +31,7 @@ module com.JohnBieniek.Java26Demo {
     opens com.JohnBieniek.Java26Demo.service to spring.core, spring.beans, spring.context;
     opens com.JohnBieniek.Java26Demo.model.organization to spring.core, spring.beans, org.hibernate.orm.core;
     opens com.JohnBieniek.Java26Demo.dto.organization to spring.core, spring.beans;
+    opens com.JohnBieniek.Java26Demo.graphql to spring.core, spring.beans, spring.context;
 
     exports com.JohnBieniek.Java26Demo;
     exports com.JohnBieniek.Java26Demo.controller;

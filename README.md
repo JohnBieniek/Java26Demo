@@ -38,8 +38,73 @@ Wait for the log to show that the application has started. It listens on port `8
 - Swagger UI: <http://localhost:8080/swagger-ui.html>
 - OpenAPI JSON: <http://localhost:8080/api-docs>
 - H2 database console: <http://localhost:8080/h2-console>
+- GraphiQL: <http://localhost:8080/graphiql>
+- GraphQL endpoint: <http://localhost:8080/graphql>
 
 To stop the application, press `Ctrl+C` in the terminal where it is running.
+
+## GraphQL demo
+
+Open GraphiQL and run the reset mutation once to create repeatable sample data:
+
+```graphql
+mutation {
+  resetOrganizationDemo
+}
+```
+
+This query demonstrates selecting only requested fields, nested team relationships,
+and the computed `totalCompensation` field:
+
+```graphql
+query OrganizationOverview {
+  teams {
+    id
+    name
+    location
+    employees {
+      id
+      name
+      department
+      totalCompensation
+    }
+    projects {
+      id
+      name
+      budget
+    }
+  }
+}
+```
+
+Create data with typed mutation input and variables:
+
+```graphql
+mutation AddEmployee($input: CreateEmployeeInput!) {
+  createEmployee(input: $input) {
+    id
+    name
+    team { name }
+  }
+}
+```
+
+```json
+{
+  "input": {
+    "name": "Grace",
+    "department": "Engineering",
+    "salary": 125000,
+    "bonus": 15000,
+    "phoneNumber": "555-1010",
+    "teamId": "1"
+  }
+}
+```
+
+The schema also exposes `team`, `employees`, `employee`, and `projects` queries;
+`createTeam` and `createProject` mutations; and a soft-delete `deleteEmployee`
+mutation. GraphQL introspection and documentation are available directly in GraphiQL.
 
 ## H2 console settings
 

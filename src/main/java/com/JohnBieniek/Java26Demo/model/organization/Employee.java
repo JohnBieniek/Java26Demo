@@ -80,6 +80,10 @@ public class Employee {
         this.team = team;
     }
 
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
     @Override
     public String toString() {
         return "Employee{id=" + id + ", name='" + name + "', department='" + department + "', salary=" + salary

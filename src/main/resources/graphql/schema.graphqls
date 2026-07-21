@@ -1,0 +1,62 @@
+"An organization team. Nested fields demonstrate GraphQL field resolution."
+type Team {
+    id: ID!
+    name: String!
+    location: String!
+    employees: [Employee!]!
+    projects: [Project!]!
+}
+
+type Employee {
+    id: ID!
+    name: String!
+    department: String!
+    salary: Int!
+    bonus: Int!
+    totalCompensation: Int!
+    phoneNumber: String
+    team: Team!
+}
+
+type Project {
+    id: ID!
+    name: String!
+    budget: Int!
+    team: Team!
+}
+
+input CreateTeamInput {
+    name: String!
+    location: String!
+}
+
+input CreateEmployeeInput {
+    name: String!
+    department: String!
+    salary: Int!
+    bonus: Int!
+    phoneNumber: String
+    teamId: ID!
+}
+
+input CreateProjectInput {
+    name: String!
+    budget: Int!
+    teamId: ID!
+}
+
+type Query {
+    teams: [Team!]!
+    team(id: ID!): Team
+    employees: [Employee!]!
+    employee(id: ID!): Employee
+    projects: [Project!]!
+}
+
+type Mutation {
+    createTeam(input: CreateTeamInput!): Team!
+    createEmployee(input: CreateEmployeeInput!): Employee!
+    createProject(input: CreateProjectInput!): Project!
+    deleteEmployee(id: ID!): Boolean!
+    resetOrganizationDemo: String!
+}
