@@ -137,7 +137,7 @@ Create an executable Spring Boot JAR and deployment archive for manual upload to
 .\build-deploy.bat
 ```
 
-The script increments the patch number stored in `.deploy-version` only after a successful build, passes that version to Gradle, recreates `eb-deploy`, and writes the upload-ready `deploy.zip` archive.
+The script increments the patch number stored in `.deploy-version` only after a successful build, passes that version to Gradle, recreates `eb-deploy`, and writes the upload-ready `Dockerfile.zip` archive containing both the Dockerfile and application JAR.
 
 Then run the generated JAR from `build/libs`:
 

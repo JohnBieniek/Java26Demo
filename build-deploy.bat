@@ -38,7 +38,7 @@ mkdir "eb-deploy"
 copy /y "Dockerfile" "eb-deploy\Dockerfile" >nul
 copy /y "%JAR%" "eb-deploy\Java26Demo-%VERSION%.jar" >nul
 
-powershell.exe -NoProfile -Command "Compress-Archive -Path '.\eb-deploy\*' -DestinationPath '.\deploy.zip' -Force"
+powershell.exe -NoProfile -Command "Compress-Archive -Path '.\eb-deploy\*' -DestinationPath '.\Dockerfile.zip' -Force"
 if errorlevel 1 (
     echo Deployment archive creation failed. Version was not incremented.
     exit /b 1
@@ -50,6 +50,6 @@ echo.
 echo Build complete.
 echo Version: %VERSION%
 echo JAR: %JAR%
-echo Deployment archive: deploy.zip
+echo Deployment archive: Dockerfile.zip
 
 endlocal
