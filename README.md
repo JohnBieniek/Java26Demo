@@ -53,6 +53,10 @@ mutation {
 }
 ```
 
+A Spring Batch job runs this reset automatically every morning at 6:00 AM in the
+`America/New_York` time zone. Override `app.jobs.organization-demo-reset.cron` or
+`app.jobs.organization-demo-reset.zone` to change the schedule.
+
 This query demonstrates selecting only requested fields, nested team relationships,
 and the computed `totalCompensation` field:
 

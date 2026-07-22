@@ -53,10 +53,10 @@ import io.swagger.v3.oas.annotations.info.Info;
                         creates the schema when the application starts and drops it when the application stops, so all
                         application data is lost on restart.
 
-                        A Spring Batch job also removes all project, employee, and team rows every morning at 6:00 AM in
-                        the America/New_York time zone. Spring Batch execution metadata is retained. The cron expression
-                        and time zone can be changed with app.jobs.database-cleanup.cron and
-                        app.jobs.database-cleanup.zone.
+                        A Spring Batch job runs the same organization reset used by the resetOrganizationDemo GraphQL
+                        mutation every morning at 6:00 AM in the America/New_York time zone. Spring Batch execution
+                        metadata is retained. The cron expression and time zone can be changed with
+                        app.jobs.organization-demo-reset.cron and app.jobs.organization-demo-reset.zone.
 
                         The interview endpoints contain common algorithm demonstrations, including sliding-window string
                         searches for unique substrings, two-pointer sum matching over sorted values, duplicate detection,

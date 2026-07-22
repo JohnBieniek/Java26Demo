@@ -10,11 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.JohnBieniek.Java26Demo.repository.EmployeeRepository;
-import com.JohnBieniek.Java26Demo.repository.ProjectRepository;
-import com.JohnBieniek.Java26Demo.repository.TeamRepository;
+import com.JohnBieniek.Java26Demo.service.SqlService;
 
-/** Configures the Spring Batch job that removes all organization demo data. */
+/** Configures the Spring Batch job that resets the organization demo data. */
 @Configuration
 public class DatabaseCleanupBatchConfiguration {
     /**
@@ -25,36 +23,30 @@ public class DatabaseCleanupBatchConfiguration {
      * @return configured cleanup job
      */
     @Bean
-    public Job dailyDatabaseCleanupJob(
+    public Job dailyOrganizationDemoResetJob(
             JobRepository jobRepository,
-            Step wipeOrganizationDataStep) {
-        return new JobBuilder("dailyDatabaseCleanupJob", jobRepository)
-                .start(wipeOrganizationDataStep)
+            Step resetOrganizationDemoStep) {
+        return new JobBuilder("dailyOrganizationDemoResetJob", jobRepository)
+                .start(resetOrganizationDemoStep)
                 .build();
     }
 
     /**
-     * Deletes application rows in foreign-key-safe order inside one transaction.
+     * Runs the same reset operation exposed by the resetOrganizationDemo mutation.
      *
      * @param jobRepository Spring Batch execution repository
      * @param transactionManager transaction manager used by the tasklet step
-     * @param projectRepository project persistence access
-     * @param employeeRepository employee persistence access
-     * @param teamRepository team persistence access
-     * @return cleanup tasklet step
+     * @param sqlService organization demo reset service
+     * @return reset tasklet step
      */
     @Bean
-    public Step wipeOrganizationDataStep(
+    public Step resetOrganizationDemoStep(
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
-            ProjectRepository projectRepository,
-            EmployeeRepository employeeRepository,
-            TeamRepository teamRepository) {
-        return new StepBuilder("wipeOrganizationDataStep", jobRepository)
+            SqlService sqlService) {
+        return new StepBuilder("resetOrganizationDemoStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    projectRepository.deleteAllInBatch();
-                    employeeRepository.deleteAllInBatch();
-                    teamRepository.deleteAllInBatch();
+                    sqlService.resetEmployeesTeamsAndProjects();
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();

@@ -24,7 +24,7 @@ class DatabaseCleanupBatchTests {
     private JobOperator jobOperator;
 
     @Autowired
-    private Job dailyDatabaseCleanupJob;
+    private Job dailyOrganizationDemoResetJob;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -36,7 +36,7 @@ class DatabaseCleanupBatchTests {
     private TeamRepository teamRepository;
 
     @Test
-    void cleanupJobDeletesOrganizationRows() throws Exception {
+    void resetJobReplacesOrganizationRowsWithDemoData() throws Exception {
         Team team = teamRepository.save(new Team("Cleanup Test", "Test Location"));
         employeeRepository.save(new Employee(
                 "Cleanup Employee", "Test", 1, 0, "555-0100", null, team));
@@ -45,11 +45,16 @@ class DatabaseCleanupBatchTests {
         var parameters = new JobParametersBuilder()
                 .addLong("testRun", Instant.now().toEpochMilli())
                 .toJobParameters();
-        var execution = jobOperator.start(dailyDatabaseCleanupJob, parameters);
+        var execution = jobOperator.start(dailyOrganizationDemoResetJob, parameters);
 
         assertThat(execution.getStatus().isUnsuccessful()).isFalse();
-        assertThat(projectRepository.count()).isZero();
-        assertThat(employeeRepository.count()).isZero();
-        assertThat(teamRepository.count()).isZero();
+        assertThat(teamRepository.findAll())
+                .extracting(Team::getName)
+                .containsExactlyInAnyOrder("Alpha", "Beta", "Gamma");
+        assertThat(employeeRepository.count()).isEqualTo(6);
+        assertThat(projectRepository.count()).isEqualTo(3);
+        assertThat(teamRepository.findAll())
+                .extracting(Team::getName)
+                .doesNotContain("Cleanup Test");
     }
 }
